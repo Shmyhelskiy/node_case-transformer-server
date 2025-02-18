@@ -50,6 +50,8 @@ const createServer = () => {
         res.statusCode = 400;
         res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ errors }));
+
+        return;
       }
 
       res.end(
@@ -61,9 +63,14 @@ const createServer = () => {
         }),
       );
     } catch (error) {
-      res.statusCode = 400;
+      res.statusCode = 500;
       res.setHeader('Content-Type', 'application/json');
-      res.end();
+
+      res.end(
+        JSON.stringify({
+          errors: [{ message: 'Internal Server Error' }],
+        }),
+      );
     }
   });
 };
