@@ -14,18 +14,20 @@ const createServer = () => {
     const params = Object.fromEntries(normalizedURL.searchParams.entries());
     const textToConvert = normalizedURL.pathname.slice(1);
 
+    res.setHeader('Content-Type', 'application/json');
+
+    const errors = [];
+
     try {
       const result = convertToCase(textToConvert, params.toCase);
 
       res.statusCode = 200;
       res.setHeader('Content-Type', 'application/json');
 
-      const errors = [];
-
       if (!textToConvert) {
         errors.push(
           createMessage(
-            'Text to convert is required. Correct request is: "/<TEXT_TO_CONVERT>?toCase=<CASE_NAME>"',
+            'Text to convert is required. Correct request is: "/<TEXT_TO_CONVERT>?toCase=<CASE_NAME>".',
           ),
         );
       }
@@ -48,7 +50,6 @@ const createServer = () => {
 
       if (errors.length > 0) {
         res.statusCode = 400;
-        res.setHeader('Content-Type', 'application/json');
         res.end(JSON.stringify({ errors }));
 
         return;
@@ -63,14 +64,9 @@ const createServer = () => {
         }),
       );
     } catch (error) {
-      res.statusCode = 500;
-      res.setHeader('Content-Type', 'application/json');
+      res.statusCode = 400;
 
-      res.end(
-        JSON.stringify({
-          errors: [{ message: 'Internal Server Error' }],
-        }),
-      );
+      res.end();
     }
   });
 };
